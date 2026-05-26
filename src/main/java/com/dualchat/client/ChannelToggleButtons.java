@@ -12,25 +12,32 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-/**
- * Renders the RP/HRP toggle buttons above the chat input field, and routes clicks.
- * Uses render + mouse events directly (rather than ScreenEvent.Init#addListener) so the widget
- * is guaranteed to render — that helper only registers click listeners, not renderables.
- */
 @Mod.EventBusSubscriber(modid = DualChatMod.MODID, value = Dist.CLIENT)
 public final class ChannelToggleButtons {
 
-    private static final int BTN_W   = 36;
-    private static final int BTN_H   = 14;
-    private static final int BTN_GAP = 4;
-    private static final int LEFT_PADDING = 2;
-    /** Distance between the bottom of the chat screen and the top of the toggle row. */
-    private static final int BOTTOM_OFFSET = 32;
+    private static final int BTN_W      = 36;
+    private static final int BTN_H      = 14;
+    private static final int BTN_GAP    = 4;
+    private static final int LEFT_PAD   = 2;
+    private static final int BADGE_SIZE = 7;
 
     private ChannelToggleButtons() {}
 
-    private static int btnX(int index) { return LEFT_PADDING + index * (BTN_W + BTN_GAP); }
-    private static int btnY(int screenHeight) { return screenHeight - BOTTOM_OFFSET; }
+    /**
+     * Y position of the button row — anchored just above the chat messages area.
+     * Adapts to the player's chat height and scale settings.
+     */
+    private static int btnY(int screenHeight) {
+        Minecraft mc = Minecraft.getInstance();
+        double scale = Math.max(0.1, mc.options.chatScale().get());
+        int lines = mc.gui.getChat().getLinesPerPage();
+        // Chat messages bottom is at screenHeight - 40 (vanilla anchor point).
+        // Each line is 9 unscaled px; scale compresses/expands those pixels.
+        int chatHeightPx = (int)(lines * 9.0 * scale);
+        return Math.max(screenHeight - 40 - chatHeightPx - BTN_H - 3, 4);
+    }
+
+    private static int btnX(int index) { return LEFT_PAD + index * (BTN_W + BTN_GAP); }
 
     @SubscribeEvent
     public static void onRender(ScreenEvent.Render.Post event) {
@@ -48,7 +55,7 @@ public final class ChannelToggleButtons {
     @SubscribeEvent
     public static void onClick(ScreenEvent.MouseButtonPressed.Pre event) {
         if (!(event.getScreen() instanceof ChatScreen screen)) return;
-        if (event.getButton() != 0) return; // left click only
+        if (event.getButton() != 0) return;
 
         int y = btnY(screen.height);
         double mx = event.getMouseX();
@@ -82,16 +89,26 @@ public final class ChannelToggleButtons {
 
         RenderSystem.enableBlend();
         int x1 = x + BTN_W, y1 = y + BTN_H;
-        g.fill(x,        y,        x1,        y1,        fillColor);
-        g.fill(x,        y,        x1,        y + 1,     borderColor);
-        g.fill(x,        y1 - 1,   x1,        y1,        borderColor);
-        g.fill(x,        y,        x + 1,     y1,        borderColor);
-        g.fill(x1 - 1,   y,        x1,        y1,        borderColor);
+        g.fill(x,      y,      x1,     y1,     fillColor);
+        g.fill(x,      y,      x1,     y + 1,  borderColor);
+        g.fill(x,      y1 - 1, x1,     y1,     borderColor);
+        g.fill(x,      y,      x + 1,  y1,     borderColor);
+        g.fill(x1 - 1, y,      x1,     y1,     borderColor);
 
         int textColor = active ? 0xFFFFFFFF : 0xFFCCCCCC;
         String label = ch.displayName();
         int tx = x + (BTN_W - font.width(label)) / 2;
         int ty = y + (BTN_H - 8) / 2;
         g.drawString(font, label, tx, ty, textColor, false);
+
+        // Unread badge — small red square with "!" in the top-right corner
+        if (!active && ClientChannelHistory.hasUnread(ch)) {
+            int bx = x + BTN_W - BADGE_SIZE;
+            int by = y - BADGE_SIZE / 2;
+            g.fill(bx,     by,                bx + BADGE_SIZE, by + BADGE_SIZE, 0xFFCC0000);
+            g.fill(bx,     by,                bx + BADGE_SIZE, by + 1,          0xFF880000);
+            g.fill(bx,     by + BADGE_SIZE-1, bx + BADGE_SIZE, by + BADGE_SIZE, 0xFF880000);
+            g.drawString(font, "!", bx + (BADGE_SIZE - font.width("!")) / 2, by, 0xFFFFFFFF, false);
+        }
     }
 }

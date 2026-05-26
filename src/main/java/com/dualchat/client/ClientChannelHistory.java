@@ -7,7 +7,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public final class ClientChannelHistory {
@@ -16,6 +18,7 @@ public final class ClientChannelHistory {
     public record RawMessage(Channel channel, String senderName, String body) {}
 
     private static final Map<Channel, Deque<RawMessage>> histories = new EnumMap<>(Channel.class);
+    private static final Set<Channel> unread = EnumSet.noneOf(Channel.class);
 
     static {
         for (Channel ch : Channel.values()) histories.put(ch, new ArrayDeque<>());
@@ -33,7 +36,20 @@ public final class ClientChannelHistory {
         return histories.get(channel);
     }
 
+    public static void markUnread(Channel channel) {
+        unread.add(channel);
+    }
+
+    public static void clearUnread(Channel channel) {
+        unread.remove(channel);
+    }
+
+    public static boolean hasUnread(Channel channel) {
+        return unread.contains(channel);
+    }
+
     public static void clear() {
         for (Deque<RawMessage> d : histories.values()) d.clear();
+        unread.clear();
     }
 }

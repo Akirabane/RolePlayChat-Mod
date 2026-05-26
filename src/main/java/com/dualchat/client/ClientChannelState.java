@@ -19,6 +19,7 @@ public final class ClientChannelState {
     public static void set(Channel channel) {
         if (channel == current) return;
         current = channel;
+        ClientChannelHistory.clearUnread(channel);
         NetworkHandler.sendToServer(new C2SSetChannelPacket(channel));
         swapHistory(channel);
     }

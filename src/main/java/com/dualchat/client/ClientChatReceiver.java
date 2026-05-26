@@ -49,6 +49,8 @@ public final class ClientChatReceiver {
         ClientChannelHistory.addMessage(channel, senderName, body);
         if (channel == ClientChannelState.get()) {
             mc.gui.getChat().addMessage(buildLine(channel, senderName, body));
+        } else {
+            ClientChannelHistory.markUnread(channel);
         }
     }
 }
