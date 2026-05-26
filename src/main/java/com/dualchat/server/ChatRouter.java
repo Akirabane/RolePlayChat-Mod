@@ -24,7 +24,9 @@ public final class ChatRouter {
         S2CChatMessagePacket packet = new S2CChatMessagePacket(ch, sender.getName().getString(), body);
 
         if (ch == Channel.RP) {
-            double rangeSq = DualChatMod.RP_RANGE * DualChatMod.RP_RANGE;
+            int voiceDist = PlasmoVoiceIntegration.getLastDistance(sender.getUUID());
+            double range = voiceDist > 0 ? voiceDist : DualChatMod.RP_RANGE;
+            double rangeSq = range * range;
             for (ServerPlayer p : sl.players()) {
                 if (p.distanceToSqr(sender) > rangeSq) continue;
                 NetworkHandler.sendToClient(packet, p);
