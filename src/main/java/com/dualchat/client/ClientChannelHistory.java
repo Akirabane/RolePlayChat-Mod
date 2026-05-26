@@ -48,6 +48,10 @@ public final class ClientChannelHistory {
         return unread.contains(channel);
     }
 
+    public static int getHistorySize(Channel channel) {
+        return histories.get(channel).size();
+    }
+
     public static void clear() {
         for (Deque<RawMessage> d : histories.values()) d.clear();
         unread.clear();

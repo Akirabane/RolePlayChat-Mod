@@ -9,7 +9,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public final class ClientChannelState {
-    private static Channel current = Channel.RP;
+    private static Channel current = Channel.HRP;
 
     private ClientChannelState() {}
 
@@ -38,7 +38,15 @@ public final class ClientChannelState {
         }
     }
 
-    /** Resend the current channel — used right after world-join so the server's default (RP) matches our UI. */
+    /** Reset to HRP on world-join (history already cleared by caller), clear visible chat, notify server. */
+    public static void reset() {
+        current = Channel.HRP;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.gui != null) mc.gui.getChat().clearMessages(false);
+        NetworkHandler.sendToServer(new C2SSetChannelPacket(current));
+    }
+
+    /** Resend the current channel to the server without changing local state. */
     public static void resync() {
         NetworkHandler.sendToServer(new C2SSetChannelPacket(current));
     }

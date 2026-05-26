@@ -23,11 +23,11 @@ public class ClientEventHandler {
         event.setCanceled(true);
     }
 
-    /** When joining a world, clear stale history, reset to RP, and push our channel to the server. */
+    /** When joining a world, clear stale history, reset to HRP, clear visible chat, and push our channel to the server. */
     @SubscribeEvent
     public static void onLoggedIn(ClientPlayerNetworkEvent.LoggingIn event) {
         ClientChannelHistory.clear();
-        ClientChannelState.resync();
+        ClientChannelState.reset();
     }
 
     @SubscribeEvent

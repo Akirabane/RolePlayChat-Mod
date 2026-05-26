@@ -30,10 +30,13 @@ public final class ChannelToggleButtons {
     private static int btnY(int screenHeight) {
         Minecraft mc = Minecraft.getInstance();
         double scale = Math.max(0.1, mc.options.chatScale().get());
-        int lines = mc.gui.getChat().getLinesPerPage();
-        // Chat messages bottom is at screenHeight - 40 (vanilla anchor point).
-        // Each line is 9 unscaled px; scale compresses/expands those pixels.
-        int chatHeightPx = (int)(lines * 9.0 * scale);
+        int maxLines = mc.gui.getChat().getLinesPerPage();
+        // Use the actual number of messages in the current channel rather than the max
+        // capacity — otherwise the buttons end up near the top of the screen when the
+        // chat has only a few lines but is configured for a tall window.
+        int msgCount = ClientChannelHistory.getHistorySize(ClientChannelState.get());
+        int visibleLines = Math.min(Math.max(msgCount, 1), maxLines);
+        int chatHeightPx = (int)(visibleLines * 9.0 * scale);
         return Math.max(screenHeight - 40 - chatHeightPx - BTN_H - 3, 4);
     }
 

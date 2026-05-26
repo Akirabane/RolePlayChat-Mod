@@ -48,7 +48,7 @@ public class ServerEventHandler {
     /** Default everyone to RP on join. Cleared on disconnect to avoid leaking memory across sessions. */
     @SubscribeEvent
     public void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        PlayerChannelState.set(event.getEntity().getUUID(), Channel.RP);
+        PlayerChannelState.set(event.getEntity().getUUID(), Channel.HRP);
     }
 
     @SubscribeEvent
