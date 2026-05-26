@@ -6,6 +6,7 @@ import com.dualchat.network.C2SChatMessagePacket;
 import com.dualchat.network.NetworkHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatEvent;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,6 +14,12 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = DualChatMod.MODID, value = Dist.CLIENT)
 public class ClientEventHandler {
+
+    /** Suppress all vanilla/server chat — our mod adds messages directly via getChat().addMessage(), bypassing this event. */
+    @SubscribeEvent
+    public static void onChatReceived(ClientChatReceivedEvent event) {
+        event.setCanceled(true);
+    }
 
     /** Intercept every chat message typed by the player. Commands ("/...") are NOT routed through this event, so they keep working. */
     @SubscribeEvent
