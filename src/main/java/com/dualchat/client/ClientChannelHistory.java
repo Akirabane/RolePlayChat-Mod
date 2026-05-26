@@ -1,7 +1,6 @@
 package com.dualchat.client;
 
 import com.dualchat.Channel;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -14,7 +13,9 @@ import java.util.Map;
 public final class ClientChannelHistory {
     private static final int MAX_HISTORY = 100;
 
-    private static final Map<Channel, Deque<Component>> histories = new EnumMap<>(Channel.class);
+    public record RawMessage(Channel channel, String senderName, String body) {}
+
+    private static final Map<Channel, Deque<RawMessage>> histories = new EnumMap<>(Channel.class);
 
     static {
         for (Channel ch : Channel.values()) histories.put(ch, new ArrayDeque<>());
@@ -22,17 +23,17 @@ public final class ClientChannelHistory {
 
     private ClientChannelHistory() {}
 
-    public static void addMessage(Channel channel, Component msg) {
-        Deque<Component> history = histories.get(channel);
-        history.addLast(msg);
+    public static void addMessage(Channel channel, String senderName, String body) {
+        Deque<RawMessage> history = histories.get(channel);
+        history.addLast(new RawMessage(channel, senderName, body));
         if (history.size() > MAX_HISTORY) history.removeFirst();
     }
 
-    public static Iterable<Component> getHistory(Channel channel) {
+    public static Iterable<RawMessage> getHistory(Channel channel) {
         return histories.get(channel);
     }
 
     public static void clear() {
-        for (Deque<Component> d : histories.values()) d.clear();
+        for (Deque<RawMessage> d : histories.values()) d.clear();
     }
 }

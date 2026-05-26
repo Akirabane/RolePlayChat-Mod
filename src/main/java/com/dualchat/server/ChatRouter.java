@@ -4,6 +4,7 @@ import com.dualchat.Channel;
 import com.dualchat.DualChatMod;
 import com.dualchat.network.NetworkHandler;
 import com.dualchat.network.S2CChatMessagePacket;
+import com.dualchat.network.S2CEmotePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -30,6 +31,17 @@ public final class ChatRouter {
             }
         } else { // HRP — global, all players on the server.
             for (ServerPlayer p : sl.getServer().getPlayerList().getPlayers()) {
+                NetworkHandler.sendToClient(packet, p);
+            }
+        }
+    }
+
+    public static void broadcastEmote(ServerPlayer sender, String text) {
+        if (!(sender.level() instanceof ServerLevel sl)) return;
+        double rangeSq = DualChatMod.RP_RANGE * DualChatMod.RP_RANGE;
+        S2CEmotePacket packet = new S2CEmotePacket(sender.getUUID(), text);
+        for (ServerPlayer p : sl.players()) {
+            if (p.distanceToSqr(sender) <= rangeSq) {
                 NetworkHandler.sendToClient(packet, p);
             }
         }

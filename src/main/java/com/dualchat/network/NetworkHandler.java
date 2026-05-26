@@ -35,6 +35,9 @@ public class NetworkHandler {
         CHANNEL.registerMessage(id++, S2CChatMessagePacket.class,
             S2CChatMessagePacket::encode, S2CChatMessagePacket::decode, S2CChatMessagePacket::handle,
             Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        CHANNEL.registerMessage(id++, S2CEmotePacket.class,
+            S2CEmotePacket::encode, S2CEmotePacket::decode, S2CEmotePacket::handle,
+            Optional.of(NetworkDirection.PLAY_TO_CLIENT));
     }
 
     public static void sendToServer(Object packet) {

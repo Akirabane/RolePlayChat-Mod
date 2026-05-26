@@ -1,4 +1,6 @@
 {
     "dualchat.channel.rp": "RP",
-    "dualchat.channel.hrp": "HRP"
+    "dualchat.channel.hrp": "HRP",
+    "key.dualchat.font_picker": "Choisir la police",
+    "key.categories.dualchat": "DualChat"
 }

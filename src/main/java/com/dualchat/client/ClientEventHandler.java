@@ -1,11 +1,13 @@
 package com.dualchat.client;
 
 import com.dualchat.DualChatMod;
+import com.dualchat.client.FontConfig;
 import com.dualchat.network.C2SChatMessagePacket;
 import com.dualchat.network.NetworkHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -26,5 +28,13 @@ public class ClientEventHandler {
     public static void onLoggedIn(ClientPlayerNetworkEvent.LoggingIn event) {
         ClientChannelHistory.clear();
         ClientChannelState.resync();
+    }
+
+    @SubscribeEvent
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            FontConfig.ensureFontRedirect();
+            ClientKeyBindings.tick();
+        }
     }
 }

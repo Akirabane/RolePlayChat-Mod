@@ -4,7 +4,6 @@ import com.dualchat.Channel;
 import com.dualchat.network.C2SSetChannelPacket;
 import com.dualchat.network.NetworkHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,12 +23,17 @@ public final class ClientChannelState {
         swapHistory(channel);
     }
 
+    /** Re-render the current channel with the current font (called on font change). */
+    public static void refreshCurrentChannel() {
+        swapHistory(current);
+    }
+
     private static void swapHistory(Channel channel) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.gui == null) return;
         mc.gui.getChat().clearMessages(false);
-        for (Component msg : ClientChannelHistory.getHistory(channel)) {
-            mc.gui.getChat().addMessage(msg);
+        for (ClientChannelHistory.RawMessage msg : ClientChannelHistory.getHistory(channel)) {
+            mc.gui.getChat().addMessage(ClientChatReceiver.buildLine(msg.channel(), msg.senderName(), msg.body()));
         }
     }
 
