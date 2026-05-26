@@ -60,6 +60,7 @@ processResources {
 dependencies {
     minecraft "net.minecraftforge:forge:1.20.1-${forge_version}"
     compileOnly files("C:/Users/Akirabane/AppData/Roaming/ModrinthApp/profiles/CorbeauMod/mods/plasmovoice-forge-1.20.1-2.1.9.jar")
+    compileOnly files("C:/Users/Akirabane/AppData/Roaming/ModrinthApp/profiles/CorbeauMod/mods/Pehkui-3.8.2+1.20.1-forge.jar")
 }
 
 tasks.withType(JavaCompile).configureEach {

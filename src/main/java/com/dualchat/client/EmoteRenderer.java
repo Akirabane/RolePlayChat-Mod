@@ -60,8 +60,12 @@ public final class EmoteRenderer {
         MultiBufferSource bufferSource = event.getMultiBufferSource();
         int packedLight = event.getPackedLight();
 
+        float pehkuiScale = PehkuiCompat.getModelHeightScale(player, event.getPartialTick());
+
         poseStack.pushPose();
-        poseStack.translate(0.0, player.getBbHeight() + 0.6, 0.0);
+        // Divide by pehkuiScale: the PoseStack is already in Pehkui-scaled space, so we
+        // un-scale the offset to keep the text a constant 0.6 world-units above the head.
+        poseStack.translate(0.0, (player.getBbHeight() + 0.6) / pehkuiScale, 0.0);
         poseStack.mulPose(camera.rotation());
         float scale = 0.025f;
         poseStack.scale(-scale, -scale, scale);
