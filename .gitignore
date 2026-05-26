@@ -6,3 +6,7 @@ out/
 *.iws
 .idea/
 run/
+*.class
+*.log
+*.jar
+*.war
