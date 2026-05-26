@@ -1,2 +1,2 @@
 # RolePlayChat-Mod
-Mod to separate Role Play and Non Role Play Chat in minecraft
+Mod Forge pour Minecraft 1.20.1 ajoutant deux canaux de chat isolés, conçus pour les serveurs roleplay.
