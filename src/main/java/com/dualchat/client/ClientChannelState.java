@@ -34,7 +34,7 @@ public final class ClientChannelState {
         if (mc.gui == null) return;
         mc.gui.getChat().clearMessages(false);
         for (ClientChannelHistory.RawMessage msg : ClientChannelHistory.getHistory(channel)) {
-            mc.gui.getChat().addMessage(ClientChatReceiver.buildLine(msg.channel(), msg.senderName(), msg.body()));
+            mc.gui.getChat().addMessage(ClientChatReceiver.render(msg));
         }
     }
 

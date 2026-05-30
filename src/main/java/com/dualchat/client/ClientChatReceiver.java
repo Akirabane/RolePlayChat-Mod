@@ -53,4 +53,9 @@ public final class ClientChatReceiver {
             ClientChannelHistory.markUnread(channel);
         }
     }
+
+    /** Renders a stored line: raw Component as-is, or a re-styled mod message. */
+    public static Component render(ClientChannelHistory.RawMessage msg) {
+        return msg.raw() != null ? msg.raw() : buildLine(msg.channel(), msg.senderName(), msg.body());
+    }
 }
